@@ -4,6 +4,7 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
     <title>
         ./play.it - {{name}}
     </title>
@@ -38,11 +39,11 @@
                 </div>
             </div>
             <div>
-            Tags: 
+                Tags:
                 {%- for t in themes %}
                 {{t}}
                 {% endfor %} <br>
-            Realese: {{ first_release_date }}
+                Release: {{ first_release_date }}
             </div>
         </div>
 
@@ -55,15 +56,55 @@
                 <h2>Synopsys</h2>
                 {{ storyline }}
                 {% endif %}
-                <h2>Instalation</h2>
+                <h2>Installation</h2>
+                <h3>Script Information</h3>
                 Script version: {{script["script_version"]}} <br>
                 Script name: {{script["script_name"]}} <br>
                 Target:
-                    <ul>
+                <ul>
                     {%- for file in script["file"] %}
-                        <li>{{ file -}}</li>
-                        {% endfor %}
-                    </ul>
+                    <li>{{ file -}}</li>
+                    {% endfor %}
+                </ul>
+                Dependencies: Not implemented
+
+                <h3>Usage</h3>
+                <ol>
+                    <li>
+                        Install Dependencies
+                        <ol style="list-style-type: lower-alpha; padding-bottom: 0;">
+                            <li>Arch Linux:<br><code># pacman -S dependencies</code></li>
+                            <li>Debian:<br><code># apt install dependencies</code></li>
+                        </ol>
+                    </li>
+                    <li>
+                        Put in the same directory the scripts and the archive:
+                        <ol style="list-style-type: lower-alpha; padding-bottom: 0;">
+                            {%- for file in script["file"] %}
+                            <li>
+                                <code>$ ls</code> <br> 
+                                <code>
+                                    {{ file -}}<br>
+                                    libplayit2.sh<br>
+                                    {{script["script_name"]}}<br>
+                                </code>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </li>
+                    <li>
+                        Start the building process from this directory:<br>
+                        <code>$ ./{{script["script_name"]}}</code>
+                    </li>
+                    <li>
+                        Wait a couple minutes, the building will end by giving you the commands to launch as root to install the game. It should be something similar to:
+                        <ol style="list-style-type: lower-alpha; padding-bottom: 0;">
+                            <li>Arch Linux:<br><code># pacman -U /some/path/to/game_package.pkg.tar</code></li>
+                            <li>Debian:<br><code># dpkg -i /some/path/to/game_package.deb<br># apt-get install -f</code></li>
+                        </ol>
+                    </li>
+
+                </ol>
             </div>
 
         </div>

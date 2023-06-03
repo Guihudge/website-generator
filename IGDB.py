@@ -28,7 +28,7 @@ class IGDB:
     def searchGameID(self, gameName:str):
         url = BASE_URL + "/search"
         body = 'fields game; search "{}"; limit 5;'.format(gameName).encode("utf-8")
-        self.logger.debug("serach game {} in IGDB".format(gameName))
+        self.logger.debug("search game {} in IGDB".format(gameName))
 
         response = requests.post(url, data=body, headers=self.auth_header)
         if response.status_code != 200:
