@@ -1,0 +1,58 @@
+{# templates/game.jinja #}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        ./play.it - {{name}}
+    </title>
+    <link rel="stylesheet" href="test.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@200;400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="main_container">
+        <div class="game_summary" id="Game_summary">
+            <div>
+                <img class="game_image" src={{cover}}>
+            </div>
+            <div class="summary_container">
+                <div class="game_rating">
+                    {{ rating }} TODO
+                </div>
+                <div class="game_platform">
+                    {%- for plat in platforms %}
+                        {{ plat -}}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="game_instalation">
+            <h1>{{name}}</h1>
+            <div class="game_description">
+                <h2>Description</h2>
+                {{summary}}
+                {% if storyline is defined%}
+                    <h2>Synopsys</h2>
+                    {{ storyline }}
+                {% endif %}
+                <h2>Instalation</h2>
+                TODO / À faire!
+            </div>
+
+        </div>
+    </div>
+    <div class="gallery_container">
+        <h2>Capture d'écran</h2>
+        <div gellerySize={{gellerySize}} class="gallery">
+            {%- for screen in screenshots %}
+                <img src={{ screen -}}>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

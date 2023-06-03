@@ -1,0 +1,23 @@
+<head>
+    <title>
+        ./play.it - Index
+    </title>
+    <link rel="stylesheet" href="test.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@200;400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <h1>Index</h1>
+    <ul>
+        {%- for game in games %}
+            
+                <li>
+                    <a href={{ game['link'] }}>{{ game['name'] }}</a>
+                </li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>
