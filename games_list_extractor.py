@@ -3,6 +3,8 @@ import logging
 import sys
 import time
 import json
+from progress.bar import Bar
+from datetime import datetime
 
 from IGDB import IGDB
 from config import *
@@ -29,7 +31,7 @@ class CustomFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
-spript_folder = "/home/guillaume/src/games/games"
+spript_folder = "/home/guillaume/game_extarctor/games"
 
 def get_all_script(folder):
     scripts = []
@@ -51,20 +53,30 @@ def get_script_info(script_path, logger):
     id_found = False
     name_found = False
     info = {}
+    info["script_name"] = script_path.split("/")[-1]
     with open(script_path, 'r') as file:
         data = file.readlines()
         for line in data:
-            if (("GAME_ID=" in line) or ("GAME_ID_BASE=" in line)) and not id_found:
+            if "script_version=" in line:
+                info["script_version"] = line.split("=")[1][0:-1]
+            elif (("GAME_ID=" in line) or ("GAME_ID_BASE=" in line)) and not id_found:
                 info["id"] = extract_strings(line.split("=")[1])
                 id_found = True
             elif (("GAME_NAME=" in line) or ("GAME_NAME_BASE=" in line)) and not name_found:
                 info["name"] = extract_strings(line.split("=")[1])
                 name_found = True
-            elif ("ARCHIVE" in line and "URL=" in line):
-                if "url" in info:
-                    info["url"].append(extract_strings(line.split("=")[1]))
+            elif ("ARCHIVE_" in line and not "FILES" in line and not "MD5" in line and not "TYPE" in line and not "SIZE" in line and not "SIZE" in line and not "VERSION" in line):
+                if "URL" in line:
+                    if "url" in info:
+                        info["url"].append(extract_strings(line.split("=")[1]))
+                    else:
+                        info["url"]= [extract_strings(line.split("=")[1])]
                 else:
-                    info["url"] = [extract_strings(line.split("=")[1])]
+                    if "file" in info:
+                        info["file"].append(extract_strings(line.split("=")[1]))
+                    else:
+                        info["file"]= [extract_strings(line.split("=")[1])]
+                
     
     if info == {}:
         logger.warn("Unable to parse : {}".format(script_path.split("/")[-1]))
@@ -104,46 +116,84 @@ logger.addHandler(ch)
 
 logger.info("Logger Init!")
 
+
 api = IGDB(logger)
 if api.login(clientID, clientSecret) != "OK":
     logger.error("Unable to log in IGDB!")
     sys.exit(1)
 
+
 scripts_list = get_all_script(spript_folder)
 logger.info("Found {} script(s)".format(len(scripts_list)))
 infos = []
+
 """
 for s in scripts_list:
     infos.append(get_script_info(spript_folder + "/" + s, logger))
 logger.debug("Parsing script ok")
 """
-for s in range(0,5):
+
+for s in range(0,1):
     infos.append(get_script_info(spript_folder + "/" + scripts_list[s], logger))
 logger.debug("Parsing script ok")
 
+
 igdb_info = []
 trated_script = 0
+generalBar = Bar("General Progress", max=len(infos))
 
 for game in infos:
     id = api.searchGameID(game["name"])
     if id >= 0:
         logger.debug("found id: {} for game {}".format(id, game["name"]))
         info = api.getGameInfo(id)
+        
+        size = len(info["screenshots"])
+        if "artworks" in info:
+            size += len(info["screenshots"])
+        if "platforms" in info:
+            size += len(info["platforms"])
+        if "themes" in info:
+            size += len(info["themes"])
+        
+        scriptBar = Bar("script progression", max=size)
         time.sleep(0.3)
         for i in range(0, len(info["screenshots"])):
             info["screenshots"][i] = api.getScreenshotUrl(info["screenshots"][i])
             time.sleep(0.3)
+            scriptBar.next()
         
         if "artworks" in info:
             for i in range(0, len(info["artworks"])):
                 info["artworks"][i] = api.getArtworksUrl(info["artworks"][i])
                 time.sleep(0.3)
+                scriptBar.next()
+        
+        if "platforms" in info:
+            for i in range(0, len(info["platforms"])):
+                info["platforms"][i] = api.getPlatformInfo(info["platforms"][i])["name"]
+                time.sleep(0.3)
+                scriptBar.next()
 
+        if "themes" in info:
+            for i in range(0, len(info["themes"])):
+                info["themes"][i] = api.getThemeInfo(info["themes"][i])
+                time.sleep(0.3)
+                scriptBar.next()
+    
+        if "rating" in info:
+            info["rating"] = int(info["rating"])
+
+        info["first_release_date"] = datetime.utcfromtimestamp(info["first_release_date"]).strftime('%m/%d/%Y')
         info["cover"] = api.getCoverUrl(id)
+        info["script"] = game
 
         igdb_info.append(info)
+        scriptBar.finish()
     trated_script += 1
-    logger.info("Script {}/{}".format(trated_script, len(infos)))
+    generalBar.next()
+
+generalBar.finish()
 logger.debug("Getting data ok")
 
 with open("out_igdb.json", "w") as file:

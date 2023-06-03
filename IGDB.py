@@ -53,7 +53,7 @@ class IGDB:
     
     def getGameInfo(self, gameID):
         url = BASE_URL + "/games"
-        body = "fields artworks, platforms, screenshots, storyline, summary, name; where id = {};".format(str(gameID)).encode("utf-8")
+        body = "fields artworks, platforms, screenshots, storyline, summary, name, rating, themes, first_release_date; where id = {};".format(str(gameID)).encode("utf-8")
         response = requests.post(url, data=body, headers=self.auth_header)
         
         if response.status_code != 200:
@@ -116,12 +116,62 @@ class IGDB:
     
     def getScreenshotUrl(self, gameID):
         return self.getImageUrl("screenshots", gameID)
+
+    def getPlatformInfo(self, platformID):
+        url = BASE_URL + "/platforms"
+        body = "fields *; where id = {};".format(platformID)
+
+        reponse = requests.post(url, data=body, headers=self.auth_header)
+
+        if reponse.status_code != 200:
+            self.logger.warn("get {} HTTP code for platform ID : {}".format(reponse.status_code, platformID))
+            return {}
+        
+        j = reponse.json()
+        
+        if len(j) > 0:
+            return j[0]
+        return {}
+    
+    def getPlatformLogoUrl(self, platformID):
+        info = self.getPlatformInfo(platformID)
+        
+        if info == {}:
+            return ""
+        
+        url = BASE_URL + "/platform_logos"
+        body = "fields *; where id = {};".format(info["platform_logo"])
+        reponse = requests.post(url, data=body, headers=self.auth_header)
+
+        if reponse.status_code != 200:
+            self.logger.warn("get {} HTTP code for platform ID : {}".format(reponse.status_code, platformID))
+            return ""
+        
+        j = reponse.json()
+        if len(j) > 0:
+            return "https://images.igdb.com/igdb/image/upload/t_logo_med/" + j[0]["image_id"] + ".jpg"
+        return ""
+    
+    def getThemeInfo(self, themeID):
+        url = BASE_URL + "/themes"
+        body = "fields *; where id = {};".format(themeID)
+        reponse = requests.post(url, data=body, headers=self.auth_header)
+
+        if reponse.status_code != 200:
+            self.logger.warn("get {} HTTP code for platform ID : {}".format(reponse.status_code, platformID))
+            return ""
+        
+        j = reponse.json()
+        if len(j) > 0:
+            return j[0]["name"]
+        return ""
     
     def alive(self):
         url = BASE_URL + "/games"
         test = requests.post(url, headers=self.auth_header)
         print(test.json())
 
+        
 
 
 

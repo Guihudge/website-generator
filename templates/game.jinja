@@ -21,13 +21,28 @@
             </div>
             <div class="summary_container">
                 <div class="game_rating">
-                    {{ rating }} TODO
+                    {% if rating is defined %}
+                    {{ rating }} %
+                    {% else %}
+                    -- %
+                    {% endif %}
                 </div>
                 <div class="game_platform">
-                    {%- for plat in platforms %}
-                        {{ plat -}}
-                    {% endfor %}
+
+                    <ul>
+                        {%- for plat in platforms %}
+                        <li>{{ plat -}}</li>
+                        {% endfor %}
+                    </ul>
+
                 </div>
+            </div>
+            <div>
+            Tags: 
+                {%- for t in themes %}
+                {{t}}
+                {% endfor %} <br>
+            Realese: {{ first_release_date }}
             </div>
         </div>
 
@@ -37,22 +52,30 @@
                 <h2>Description</h2>
                 {{summary}}
                 {% if storyline is defined%}
-                    <h2>Synopsys</h2>
-                    {{ storyline }}
+                <h2>Synopsys</h2>
+                {{ storyline }}
                 {% endif %}
                 <h2>Instalation</h2>
-                TODO / À faire!
+                Script version: {{script["script_version"]}} <br>
+                Script name: {{script["script_name"]}} <br>
+                Target:
+                    <ul>
+                    {%- for file in script["file"] %}
+                        <li>{{ file -}}</li>
+                        {% endfor %}
+                    </ul>
             </div>
 
         </div>
     </div>
     <div class="gallery_container">
         <h2>Capture d'écran</h2>
-        <div gellerySize={{gellerySize}} class="gallery">
+        <div style="grid-template-columns: repeat({{gellerySize}}, 1fr);" class="gallery">
             {%- for screen in screenshots %}
-                <img src={{ screen -}}>
+            <img src={{ screen -}}>
             {% endfor %}
         </div>
     </div>
 </body>
+
 </html>

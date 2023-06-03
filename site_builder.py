@@ -12,7 +12,7 @@ links = []
 
 for game in data:
     filename = "site/"+str(game["id"]) + ".html"
-    content = template.render(game, gellerySize=len(game["screenshots"]))
+    content = template.render(game, gellerySize=len(game["screenshots"]), nbPlatform=len(game["platforms"]))
     links.append({"name":game["name"], "link":str(game["id"]) + ".html"})
     with open(filename, "w", encoding="utf-8") as f:
         f.write(content)

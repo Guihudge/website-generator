@@ -3,6 +3,12 @@
 Generate website from script provided by `./play.it`.
 
 ## Status
+### TO DO
+- instalation instruction
+- clean code
+- add progress bar for indexing
+- better index
+- bug fix
 
 ## How to run
 ### Depedences and keys
@@ -28,4 +34,4 @@ At the end a new file `out_igdb.json` was created.
 
 ### Generating web site
 run `site_builder.py`
-At the end a new directory `site` was created, with game page and simple index
+At the end a new directory `site` was created, with game pages and simple index
