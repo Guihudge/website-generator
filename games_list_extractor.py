@@ -65,14 +65,14 @@ def get_script_info(script_path, logger):
             elif (("GAME_NAME=" in line) or ("GAME_NAME_BASE=" in line)) and not name_found:
                 info["name"] = extract_strings(line.split("=")[1])
                 name_found = True
-            elif ("ARCHIVE_" in line and not "FILES" in line and not "MD5" in line and not "TYPE" in line and not "SIZE" in line and not "SIZE" in line and not "VERSION" in line and  "=" in line):
+            elif ("ARCHIVE_" in line and not "FILES" in line and not "MD5" in line and not "TYPE" in line and not "SIZE" in line and not "SIZE" in line and not "VERSION" in line and not "PATH" in line and  "=" in line):
                 if "URL" in line:
                     if "url" in info:
                         info["url"].append(extract_strings(line.split("=")[1]))
                     else:
                         info["url"]= [extract_strings(line.split("=")[1])]
                 else:
-                    if "file" in info:
+                    if "file" in info and info["file"] != ".":
                         info["file"].append(extract_strings(line.split("=")[1]))
                     else:
                         info["file"]= [extract_strings(line.split("=")[1])]

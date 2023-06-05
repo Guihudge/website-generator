@@ -30,7 +30,7 @@ for game in data:
         if game["cover"] != "":
             index_info = {"name":game["name"], "link":str(game["id"]) + ".html", "cover":game["cover"]}
         else:
-            index_info = {"name":game["name"], "link":str(game["id"]) + ".html", "cover":"error.png"}
+            index_info = {"name":game["name"], "link":str(game["id"]) + ".html", "cover":"image/notFound.jpeg"}
 
         links.append(index_info)
         with open(filename, "w", encoding="utf-8") as f:

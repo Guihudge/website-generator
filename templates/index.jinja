@@ -10,9 +10,11 @@
 
 <body>
     <h1>Index</h1>
+    Tips: Use Ctrl+F to search specific game
     <div class="cards">
         {%- for game in games %}
         <div class="card">
+            {{ game['name'] }}
             <a href={{ game['link'] }}><img src={{ game['cover'] }} alt="{{ game['name'] }}"></a>
         </div>
         {% endfor %}
