@@ -2,7 +2,7 @@
     <title>
         ./play.it - Index
     </title>
-    <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@200;400&display=swap" rel="stylesheet">
@@ -10,14 +10,13 @@
 
 <body>
     <h1>Index</h1>
-    <ul>
+    <div class="cards">
         {%- for game in games %}
-            
-                <li>
-                    <a href={{ game['link'] }}>{{ game['name'] }}</a>
-                </li>
+        <div class="card">
+            <a href={{ game['link'] }}><img src={{ game['cover'] }} alt="{{ game['name'] }}"></a>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 </body>
 
 </html>

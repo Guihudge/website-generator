@@ -158,7 +158,7 @@ class IGDB:
         reponse = requests.post(url, data=body, headers=self.auth_header)
 
         if reponse.status_code != 200:
-            self.logger.warn("get {} HTTP code for platform ID : {}".format(reponse.status_code, platformID))
+            self.logger.warn("get {} HTTP code for platform ID : {}".format(reponse.status_code, themeID))
             return ""
         
         j = reponse.json()

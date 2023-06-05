@@ -3,12 +3,24 @@
 Generate website from script provided by `./play.it`.
 
 ## Status
+### Done
+- extract some information from script
+- getting information from IGDB
+- web page generation
+    - General information (Tags, platform (not accurate), Reakease, store link)
+    - Description
+    - Instalation (missing dpendencies)
+    - Screenshot
+
 ### TO DO
-- instalation instruction
-- clean code
-- add progress bar for indexing
+- clean code (aka deduplicate code in API, fix typo, add comment)
 - better index
-- bug fix
+- bug :
+    - Fix duplicata
+    - Game not found (ex: mokey Island 1)
+    - Wrong game prasing (ex: rogue leagacy -> found: Assassin’s Creed Rogue)
+    - fix script parsing for : `play-fallout-classics.sh`, `play-enigmatis.sh`, `play-braveland.sh`
+
 
 ## How to run
 ### Depedences and keys

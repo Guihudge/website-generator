@@ -152,73 +152,81 @@ for g in igdb_info:
 
 trated_script = 0
 generalBar = Bar("General Progress", max=len(infos))
+notFound = []
 
 
 for game in infos:
-    if not game["name"] in presentInFile:
-        id = api.searchGameID(game["name"])
-        if id >= 0:
-            logger.debug("found id: {} for game {}".format(id, game["name"]))
-            info = api.getGameInfo(id)
-            size = 0
-            if "screenshots" in info:
-                size += len(info["screenshots"])
-            if "artworks" in info:
-                size += len(info["artworks"])
-            if "platforms" in info:
-                size += len(info["platforms"])
-            if "themes" in info:
-                size += len(info["themes"])
-            
-            scriptBar = Bar("script progression ({})".format(game["name"]), max=size)
-            time.sleep(0.3)
-            if "screenshots" in info:
-                for i in range(0, len(info["screenshots"])):
-                    info["screenshots"][i] = api.getScreenshotUrl(info["screenshots"][i])
-                    time.sleep(0.3)
-                    scriptBar.next()
+    if "name" in game:
+        if not game["name"] in presentInFile:
+            id = api.searchGameID(game["name"])
+            if id <= 0:
+                logger.info("Use alternate name for: {}".format(game["name"]))
+                id = api.searchGameID(game["id"].replace("-", " "))
+            if id >= 0:
+                logger.debug("found id: {} for game {}".format(id, game["name"]))
+                info = api.getGameInfo(id)
+                size = 0
+                if "screenshots" in info:
+                    size += len(info["screenshots"])
+                if "artworks" in info:
+                    size += len(info["artworks"])
+                if "platforms" in info:
+                    size += len(info["platforms"])
+                if "themes" in info:
+                    size += len(info["themes"])
                 
-            if "artworks" in info:
-                for i in range(0, len(info["artworks"])):
-                    info["artworks"][i] = api.getArtworksUrl(info["artworks"][i])
-                    time.sleep(0.3)
-                    scriptBar.next()
+                scriptBar = Bar("script progression ({})".format(game["name"]), max=size)
+                time.sleep(0.3)
+                if "screenshots" in info:
+                    for i in range(0, len(info["screenshots"])):
+                        info["screenshots"][i] = api.getScreenshotUrl(info["screenshots"][i])
+                        time.sleep(0.3)
+                        scriptBar.next()
+                    
+                if "artworks" in info:
+                    for i in range(0, len(info["artworks"])):
+                        info["artworks"][i] = api.getArtworksUrl(info["artworks"][i])
+                        time.sleep(0.3)
+                        scriptBar.next()
+                
+                if "platforms" in info:
+                    for i in range(0, len(info["platforms"])):
+                        info["platforms"][i] = api.getPlatformInfo(info["platforms"][i])["name"]
+                        time.sleep(0.3)
+                        scriptBar.next()
+
+                if "themes" in info:
+                    for i in range(0, len(info["themes"])):
+                        info["themes"][i] = api.getThemeInfo(info["themes"][i])
+                        time.sleep(0.3)
+                        scriptBar.next()
             
-            if "platforms" in info:
-                for i in range(0, len(info["platforms"])):
-                    info["platforms"][i] = api.getPlatformInfo(info["platforms"][i])["name"]
-                    time.sleep(0.3)
-                    scriptBar.next()
+                if "rating" in info:
+                    info["rating"] = int(info["rating"])
 
-            if "themes" in info:
-                for i in range(0, len(info["themes"])):
-                    info["themes"][i] = api.getThemeInfo(info["themes"][i])
-                    time.sleep(0.3)
-                    scriptBar.next()
-        
-            if "rating" in info:
-                info["rating"] = int(info["rating"])
+                if "first_release_date" in info:
+                    info["first_release_date"] = datetime.utcfromtimestamp(info["first_release_date"]).strftime('%m/%d/%Y')
+                
+                info["script"] = game
 
-            if "first_release_date" in info:
-                info["first_release_date"] = datetime.utcfromtimestamp(info["first_release_date"]).strftime('%m/%d/%Y')
-            
-            info["script"] = game
+                info["cover"] = api.getCoverUrl(id)
 
-            info["cover"] = api.getCoverUrl(id)
+                igdb_info.append(info)
 
-            igdb_info.append(info)
-
-            file = open("out_igdb.json", "w")
-            json.dump(igdb_info, file)
-            file.flush()
-            file.close()
-            scriptBar.finish()
+                file = open("out_igdb.json", "w")
+                json.dump(igdb_info, file)
+                file.flush()
+                file.close()
+                scriptBar.finish()
+            else:
+                notFound.append(game["name"])
 
     trated_script += 1
     generalBar.next()
 
 generalBar.finish()
 logger.debug("Getting data ok")
+logger.warning("Not found folloing game: {}".format(notFound))
 
 #print(igdb_info)
 #print(get_game_provider(infos))
